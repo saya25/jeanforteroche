@@ -1,0 +1,55 @@
+@media(min-width:768px) {
+
+    .glyphicon-cog {
+        margin-left: 60%;
+    }
+}
+
+@media(min-width: 992px) {
+
+    .glyphicon-cog {
+        margin-top: -5%;
+        margin-left: 70%;
+    }
+}
+
+@media(min-width: 1199px) {
+
+    .glyphicon-cog {
+        margin-top: -5%;
+        margin-left: 75%;
+    }
+}
+
+body {
+    padding-top: 90px;
+}
+
+body{
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+
+}
+
+.footer {
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+    text-align: center;
+}
+
+.articleTitle:hover, .articleTitle:focus {
+    text-decoration: none;
+}
+
+.adminTable {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+#errorPanel {
+    padding-top: 30px;
+    padding-bottom: 10px;
+}
+
+

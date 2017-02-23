@@ -1,0 +1,47 @@
+{% extends 'layout.html.twig' %}
+{% set adminMenu = true %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+    {#Load tinycme admin, edit comments with apikey #}
+    <script src="//cloud.tinymce.com/stable/tinymce.min.js?apiKey=7qzu3f6qd8slivxd7d11m4edq1mx2k0q1au938t2kd72k4my"></script>
+    <script>tinymce.init({ selector:'textarea' });</script>
+
+    <h2 class="text-center">{{ block('title') }}</h2>
+    {% for flashMessage in app.session.flashbag.get('success') %}
+        <div class="alert alert-success">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+
+    <div class="well">
+        {{ form_start(commentForm, { 'attr': {'class': 'form-horizontal'} }) }}
+        <div class="form-group">
+            <div class="col-sm-6 col-sm-offset-4">
+                {{ form_errors(commentForm.author) }}
+                {{ form_label(commentForm.author)}}
+                {{ form_widget(commentForm.author, { 'attr':  {
+                'rows': '4',
+                'class': 'form-control',
+                }}) }}
+
+                {{ form_errors(commentForm.content) }}
+                {{ form_label(commentForm.content, null, { 'label_attr':  {
+                    'class': 'control-label',
+                }}) }}
+                {{ form_widget(commentForm.content, { 'attr':  {
+                    'class': 'form-control',
+                    'rows': '4'
+                }}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-3">
+                <input type="submit" class="btn btn-primary" value="Editer" />
+            </div>
+        </div>
+        {{ form_end(commentForm) }}
+    </div>
+{% endblock %}

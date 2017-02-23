@@ -1,0 +1,66 @@
+{% extends "layout.html.twig" %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+    <div id="position"> </div>
+    {% for flashMessage in app.session.flashbag.get('success') %}
+        <div class="alert alert-success">
+            {{ flashMessage }}
+        </div>
+    {% endfor %}
+    <h2>{{ article.title }}</h2>
+    <p>{{ article.content|raw }}</p>
+
+    <h3>Comments</h3>
+    {% for comment in comments %}
+        <p> <strong>{{ comment.author }}</strong> {{ comment.content }}
+            <button id="buttonAnswer" type="button" class="btn-primary btn-xs"> répondre </button>
+        <form id="underLevelComment1"> </form>
+        <br>
+    {% else %}
+        Pas encore de commentaire.
+    {% endfor %}
+
+    {% if commentForm %}
+        <h3>Ajouter un commentaire</h3>
+        {{ form_start(commentForm) }}
+        <div class="form-group">
+            <div class="col-sm-6">
+            {{ form_errors(commentForm.author) }}
+            {{ form_widget(commentForm.author, { 'attr':  {
+                'class': 'form-control',
+                'placeholder': 'Entrer votre pseudo'
+            }}) }}
+
+            {{ form_errors(commentForm.content) }}
+            {{ form_widget(commentForm.content, { 'attr':  {
+                'rows': '4',
+                'class': 'form-control',
+                'placeholder': 'Enter votre commentaire'
+            }}) }}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12">
+            <input type="submit" class="btn btn-primary" value="Ajouter" />
+            </div>
+        </div>
+        {{ form_end(commentForm) }}
+    {% endif %}
+{% endblock %}
+
+    {% block javascript %}
+        <script>
+            $(document).ready(function() {
+                $("#buttonAnswer").click(function () {
+
+                    document.getElementById("underLevelComment1").innerHTML ='{{ form_start(commentReply) }}';
+                    document.getElementById("underLevelComment1").innerHTML ='{{ form_end(commentReply) }}';
+                })
+            });
+        </script>
+    {% endblock %}
+
+
+
