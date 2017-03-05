@@ -4,12 +4,27 @@ namespace jeanforteroche\Domain;
 
 class Reply
 {
+
     /**
      * Comment id.
      *
      * @var integer
      */
-    private $idComParent;
+    private $id;
+
+    /**
+     * Comment idComParent.
+     *
+     * @var integer
+     */
+    private $comParent;
+
+    /**
+     * Comment level.
+     *
+     * @var integer
+     */
+    private $level = 0;
 
     /**
      * Comment author.
@@ -86,12 +101,21 @@ class Reply
         return  $this;
     }
 
-    public function getIdComParent(){
-        return  $this->idComParent;
+    public function getComParent(){
+        return  $this->comParent;
     }
 
-    public function setIdComParent($idComParent){
-        $this->idComParent = $idComParent;
+    public function setComParent($comParent){
+        $this->comParent = $comParent;
+        return  $this;
+    }
+
+    public function getLevel(){
+        return  $this->level;
+    }
+
+    public function setLevel($level){
+        $this->level = $level;
         return  $this;
     }
 }

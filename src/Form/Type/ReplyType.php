@@ -3,6 +3,7 @@
 namespace jeanforteroche\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -21,8 +22,14 @@ class ReplyType extends AbstractType
                     ->add('content', TextareaType::class, array(
                         'label' => 'Contenu'
                     ))
-                        ->add('idComParent', HiddenType::class, array(
-                        'label' => 'idComparent'
+                    ->add('comParent', HiddenType::class, array(
+                        'label' => 'Comparent'
+                    ))
+                    -> add('level', HiddenType::class, array(
+                        'label' => 'Level'
+                    ))
+                    -> add('annuler', ButtonType::class, array(
+                        'label' => 'Annuler'
                     ))
                      ->add('soumettre', SubmitType::class);
     }

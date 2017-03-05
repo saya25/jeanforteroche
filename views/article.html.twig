@@ -3,6 +3,7 @@
 {% block title %}{{ article.title }}{% endblock %}
 
 {% block content %}
+    <div id="Ajax">
     <div id="position"> </div>
     {% for flashMessage in app.session.flashbag.get('success') %}
         <div class="alert alert-success">
@@ -18,6 +19,7 @@
         <button type="button" class="btn-primary btn-xs buttonAnswer" value="{{ comment.id }}"> répondre </button>
 
     {% endfor %}
+
 
     <form name="reply" id="underLevelComment1" method="post"> </form>
 
@@ -46,8 +48,10 @@
             </div>
         </div>
         {{ form_end(commentForm) }}
-
+        </div>
     {% endif %}
+
+
 {% endblock %}
 
 {% block javascript %}
@@ -56,15 +60,21 @@
             var buttonAnswer = document.querySelectorAll(".buttonAnswer");
             $(buttonAnswer).click(function (event) {
                 event.preventDefault()
-               document.getElementById("underLevelComment1").innerHTML ='{{ form_start(replyForm) }}';
-               document.getElementById("underLevelComment1").innerHTML ='{{ form_end(replyForm) }}';
+                document.getElementById("underLevelComment1").innerHTML = '{{ form_start(replyForm) }}';
+                document.getElementById("underLevelComment1").innerHTML = '{{ form_end(replyForm) }}';
 
+                document.getElementById("reply_comParent").value = $(this).val();
 
-               document.getElementById("reply_idComParent").value = $(this).val();
-            })
+                $(function () {
+                    $('#reply_annuler').click(function () {
+                        $('#Ajax').load('{{ article.id }}.html', function () {
+
+                        });
+                    });
+                });
+            });
         });
     </script>
 {% endblock %}
-
 
 
