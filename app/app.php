@@ -2,7 +2,6 @@
 
 use Symfony\Component\Debug\ErrorHandler;
 use Symfony\Component\Debug\ExceptionHandler;
-use Symfony\Component\HttpFoundation\Request;
 
 // Chargement erreurs, exception
 ErrorHandler::register();
@@ -73,21 +72,22 @@ $app['dao.user'] = function ($app) {
     return new jeanforteroche\DAO\UserDAO($app['db']);
 };
 
-$app['dao.reply'] = function ($app) {
-    return new jeanforteroche\DAO\ReplyDAO($app['db']);
-};
-
 $app['dao.comment'] = function ($app) {
     $commentDAO = new jeanforteroche\DAO\CommentDAO($app['db']);
     $commentDAO->setArticleDAO($app['dao.article']);
-    $commentDAO->setReplyDAO($app['dao.reply']);
     return $commentDAO;
+};
+
+$app['dao.reply'] = function ($app) {
+    $replyDAO = new jeanforteroche\DAO\ReplyDAO($app['db']);
+    $replyDAO->setCommentDAO($app['dao.comment']);
+    return $replyDAO;
 };
 
 
 $app->register(new Silex\Provider\MonologServiceProvider(), array(
-    'monolog.logfile' => __DIR__.'/../var/logs/microcms.log',
-    'monolog.name' => 'MicroCMS',
+    'monolog.logfile' => __DIR__.'/../var/logs/jeanforteroche.log',
+    'monolog.name' => 'JeanForteroche',
     'monolog.level' => $app['monolog.level']
 ));
 

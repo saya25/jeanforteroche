@@ -82,7 +82,4 @@ class ArticleDAO extends DAO
         // Delete the article
         $this->getDb()->delete('t_article', array('art_id' => $id));
     }
-
-
-
 }

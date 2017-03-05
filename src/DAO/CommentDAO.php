@@ -17,11 +17,16 @@ class CommentDAO extends DAO
      */
     private $userDAO;
 
-
     /**
      * @var \jeanforteroche\DAO\ReplyDAO
      */
     private $replyDAO;
+
+    public function setReplyDAO(ReplyDAO $replyDAO)
+    {
+        $this->replyDAO = $replyDAO;
+    }
+
 
     public function setArticleDAO(ArticleDAO $articleDAO)
     {
@@ -32,15 +37,6 @@ class CommentDAO extends DAO
     {
         $this->userDAO = $userDAO;
     }
-
-    /**
-     * @var \jeanforteroche\DAO\ReplyDAO
-     */
-    public function setReplyDAO(ReplyDAO $replyDAO)
-    {
-        $this->replyDAO = $replyDAO;
-    }
-
 
     /**
      * Return a list of all comments for an article, sorted by date (most recent last).
@@ -91,6 +87,7 @@ class CommentDAO extends DAO
             $article = $this->articleDAO->find($articleId);
             $comment->setArticle($article);
         }
+
         return $comment;
     }
 
@@ -99,7 +96,7 @@ class CommentDAO extends DAO
             'art_id' => $comment->getArticle()->getId(),
             'com_content' => $comment->getContent(),
             'com_author' => $comment->getAuthor(),
-            'usr_id'    => $comment->getId(1)
+            'usr_id'    => $comment->getId(),
         );
 
         if ($comment->getId()) {
@@ -146,8 +143,6 @@ class CommentDAO extends DAO
 
         if ($row)
             return $this->buildDomainObject($row);
-        else
-            throw new \Exception("pas de commentaire id " .$id);
     }
 
     /**

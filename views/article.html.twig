@@ -14,13 +14,12 @@
 
     <h3>Comments</h3>
     {% for comment in comments %}
-        <p> <strong>{{ comment.author }}</strong> {{ comment.content }}
-            <button id="buttonAnswer" type="button" class="btn-primary btn-xs"> répondre </button>
-        <form id="underLevelComment1"> </form>
-        <br>
-    {% else %}
-        Pas encore de commentaire.
+        <p> <strong>{{ comment.author }}</strong> {{ comment.content }}</p>
+        <button type="button" class="btn-primary btn-xs buttonAnswer" value="{{ comment.id }}"> répondre </button>
+
     {% endfor %}
+
+    <form name="reply" id="underLevelComment1" method="post"> </form>
 
     {% if commentForm %}
         <h3>Ajouter un commentaire</h3>
@@ -47,20 +46,25 @@
             </div>
         </div>
         {{ form_end(commentForm) }}
+
     {% endif %}
 {% endblock %}
 
-    {% block javascript %}
-        <script>
-            $(document).ready(function() {
-                $("#buttonAnswer").click(function () {
+{% block javascript %}
+    <script>
+        $(document).ready(function() {
+            var buttonAnswer = document.querySelectorAll(".buttonAnswer");
+            $(buttonAnswer).click(function (event) {
+                event.preventDefault()
+               document.getElementById("underLevelComment1").innerHTML ='{{ form_start(replyForm) }}';
+               document.getElementById("underLevelComment1").innerHTML ='{{ form_end(replyForm) }}';
 
-                    document.getElementById("underLevelComment1").innerHTML ='{{ form_start(commentReply) }}';
-                    document.getElementById("underLevelComment1").innerHTML ='{{ form_end(commentReply) }}';
-                })
-            });
-        </script>
-    {% endblock %}
+
+               document.getElementById("reply_idComParent").value = $(this).val();
+            })
+        });
+    </script>
+{% endblock %}
 
 
 

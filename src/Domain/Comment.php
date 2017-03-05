@@ -74,6 +74,10 @@ class Comment
         return $this;
     }
 
+    public function getReply() {
+        return $this->reply;
+    }
+
     public function setReply(Reply $reply) {
         $this->reply = $reply;
         return $this;

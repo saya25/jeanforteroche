@@ -30,7 +30,6 @@ class HomeController {
      */
     public function articleAction($id, Request $request, Application $app) {
         $article = $app['dao.article']->find($id);
-        $commentFormView = null;
 
         if ($article) {
             $comment = new Comment();
@@ -43,23 +42,26 @@ class HomeController {
                 $app['session']->getFlashBag()->add('success', 'Votre commentaire a bien été enregistrer');
             }
             $reply = new Reply();
-            $commentReply = $app['form.factory']->create(ReplyType::class, $reply);
-            $commentReply->handleRequest($request);
-            if ($commentReply->isSubmitted() && $commentReply->isValid())
+            $reply->setComment($comment);
+            $reply->setId($id);
+            $replyForm = $app['form.factory']->create(ReplyType::class, $reply);
+            $replyForm->handleRequest($request);
+            if ($replyForm->isSubmitted() && $replyForm->isValid())
             {
                 $app['dao.reply']->save($reply);
                 $app['session']->getFlashBag()->add('success', 'Votre commentaire a bien été enregistrer');
-            }
 
+            }
         }
         $comments = $app['dao.comment']->findAllByArticle($id);
+        $replys = $app['dao.reply']->findAllByComment($id);
 
         return $app['twig']->render('article.html.twig', array(
-
-            'commentReply'  => $commentReply->createView(),
-            'article' => $article,
-            'comments' => $comments,
-            'commentForm' => $commentForm->createView())
+                'article' => $article,
+                'comments' => $comments,
+                'replys'  => $replys,
+                'replyForm'  => $replyForm->createView(),
+                'commentForm' => $commentForm->createView())
         );
     }
 

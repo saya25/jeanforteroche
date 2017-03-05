@@ -25,6 +25,21 @@ class Article
      */
     private $content;
 
+    /**
+     * Associated article.
+     *
+     * @var \jeanforteroche\Domain\Comment
+     */
+    private $comment;
+    public function getComment(){
+        return $this->comment;
+    }
+
+    public function setComment(Comment $comment){
+        $this->comment = $comment;
+        return $this;
+    }
+
     public function getId() {
         return $this->id;
     }

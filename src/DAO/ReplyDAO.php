@@ -2,24 +2,24 @@
 
 namespace jeanforteroche\DAO;
 
-use jeanforteroche\Domain\Comment;
+use jeanforteroche\Domain\Reply;
 
 class ReplyDAO extends DAO
 {
-    /**
-     * @var \jeanforteroche\DAO\ArticleDAO
-     */
-    private $articleDAO;
-
 
     /**
      * @var \jeanforteroche\DAO\UserDAO
      */
     private $userDAO;
 
-    public function setArticleDAO(ArticleDAO $articleDAO)
+    /**
+     * @var \jeanforteroche\DAO\CommentDAO
+     */
+    private $commentDAO;
+
+    public function setCommentDAO(CommentDAO $commentDAO)
     {
-        $this->articleDAO = $articleDAO;
+        $this->commentDAO = $commentDAO;
     }
 
     public function setUserDAO(UserDAO $userDAO)
@@ -28,133 +28,93 @@ class ReplyDAO extends DAO
     }
 
     /**
-     * Return a list of all comments for an article, sorted by date (most recent last).
+     * Return a list of all replys for an article, sorted by date (most recent last).
      *
-     * @param integer $articleId The article id.
+     * @param integer $commentId reply id.
      *
-     * @return array A list of all comments for the article.
+     * @return array A list of all replys for the article.
      */
-    public function findAllByArticle($articleId)
+    public function findAllByComment($commentId)
     {
-        // The associated article is retrieved only once
-        $article = $this->articleDAO->find($articleId);
 
-        // art_id is not selected by the SQL query
-        // The article won't be retrieved during domain objet construction
-        $sql = "select com_id, com_content, com_author, usr_id from t_comment where art_id=? order by com_id";
-        $result = $this->getDb()->fetchAll($sql, array($articleId));
+        $comment = $this->commentDAO->find($commentId);
+
+        $sql = "select reply_id, reply_content, reply_author, usr_id from t_reply where com_id=? order by reply_id";
+        $result = $this->getDb()->fetchAll($sql, array($commentId));
 
         // Convert query result to an array of domain objects
-        $comments = array();
+        $replys = array();
         foreach ($result as $row) {
-            $comId = $row['com_id'];
-            $comment = $this->buildDomainObject($row);
+            $comId = $row['reply_id'];
+            $reply = $this->buildDomainObject($row);
             // The associated article is defined for the constructed comment
-            $comment->setArticle($article);
-            $comments[$comId] = $comment;
+            $reply->setComment($comment);
+            $replys[$comId] = $reply;
         }
-        return $comments;
+        return $replys;
     }
 
+
     /**
-     * Creates an Comment object based on a DB row.
+     * Creates an Reply object based on a DB row.
      *
      * @param array $row The DB row containing Comment data.
-     * @return \jeanforteroche\Domain\Comment
+     * @return \jeanforteroche\Domain\Reply
      */
     protected function buildDomainObject(array $row)
     {
-        $comment = new Comment();
-        $comment->setId($row['com_id']);
-        $comment->setAuthor($row['com_author']);
-        $comment->setContent($row['com_content']);
+        $reply = new Reply();
+        $reply->setId($row['reply_id']);
+        $reply->setAuthor($row['reply_author']);
+        $reply->setContent($row['reply_content']);
 
-        if (array_key_exists('art_id', $row))
+        if (array_key_exists('com_id', $row))
         {
-            // Find and set the associated article
-            $articleId = $row['art_id'];
-            $article = $this->articleDAO->find($articleId);
-            $comment->setArticle($article);
+            // Find and set the associated comment
+            $commentaireId = $row['com_id'];
+            $article = $this->commentDAO->find($commentaireId);
+            $reply->setComment($article);
         }
-        return $comment;
+        return $reply;
     }
 
-    public function save(Comment $comment) {
+    public function save(Reply $reply) {
+         var_dump($reply->getIdComParent());
         $commentData = array(
-            'art_id' => $comment->getArticle()->getId(),
-            'com_content' => $comment->getContent(),
-            'com_author' => $comment->getAuthor(),
-            'usr_id'    => $comment->getId(1)
+            'reply_content' => $reply->getContent(),
+            'reply_author' => $reply->getAuthor(),
+            'usr_id'    => $reply->getId(),
+            'com_id'    => $reply->getIdComParent()
         );
 
-        if ($comment->getId()) {
-            // The comment has already been saved : update it
-            $this->getDb()->insert('t_comment', $commentData);
-            // Get the id of the newly created comment and set it on the entity.
+        if ($reply->getId()) {
+            // The reply has already been saved : update it
+            $this->getDb()->insert('t_reply', $commentData);
+            // Get the id of the newly created reply and set it on the entity.
             $id = $this->getDb()->lastInsertId();
-            $comment->setId($id);
+            $reply->setId($id);
         }
     }
 
-    /**
-     * Returns a list of all comments, sorted by date (most recent first).
-     *
-     * @return array A list of all comments.
-     */
+    public function find ($id) {
+        $sql = "select * from t_reply where reply_id=?";
+        $row = $this->getDb()->fetchAssoc($sql, array($id));
+
+        if ($row)
+            return $this->buildDomainObject($row);
+    }
+
     public function findAll()
     {
-        $sql = "select * from t_comment order by com_id desc";
+        $sql = "select * from t_reply order by reply_id desc";
         $result = $this->getDb()->fetchAll($sql);
 
         // Convert query result to an array of domain objects
         $entities = array();
         foreach ($result as $row) {
-            $id = $row['com_id'];
+            $id = $row['reply_id'];
             $entities[$id] = $this->buildDomainObject($row);
         }
         return $entities;
     }
-
-    /**
-     * Removes all comments for an article
-     *
-     * @param $articleId The id of the article
-     */
-    public function deleteAllByArticle($articleId) {
-        $this->getDb()->delete('t_comment', array('art_id' => $articleId));
-    }
-
-
-    public function find ($id) {
-        $sql = "select * from t_comment where com_id=?";
-        $row = $this->getDb()->fetchAssoc($sql, array($id));
-
-        if ($row)
-            return $this->buildDomainObject($row);
-        else
-            throw new \Exception("pas de commentaire id " .$id);
-    }
-
-    /**
-     * Removes a comment from the database.
-     *
-     * @param @param integer $id The comment id
-     */
-    public function delete($id) {
-
-        $this->getDb()->delete('t_comment', array('com_id' => $id));
-    }
-
-    /**
-     * Removes all comments for a user
-     *
-     * @param integer $userId The id of the user
-     */
-
-    public function deleteAllByUser($userId)
-    {
-        $this->getDb()->delete('t_comment', array('usr_id' => $userId));
-    }
-
-
 }

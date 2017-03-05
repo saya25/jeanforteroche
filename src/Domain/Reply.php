@@ -9,7 +9,7 @@ class Reply
      *
      * @var integer
      */
-    private $id;
+    private $idComParent;
 
     /**
      * Comment author.
@@ -31,6 +31,15 @@ class Reply
      * @var \jeanforteroche\Domain\Article
      */
     private $article;
+
+
+    /**
+     * Associated article.
+     *
+     * @var \jeanforteroche\Domain\Comment
+     */
+    private $comment;
+
 
     public function getId() {
         return $this->id;
@@ -66,5 +75,23 @@ class Reply
     public function setArticle(Article $article) {
         $this->article = $article;
         return $this;
+    }
+
+    public function getComment(){
+        return $this->comment;
+    }
+
+    public function setComment(Comment $comment){
+        $this->comment = $comment;
+        return  $this;
+    }
+
+    public function getIdComParent(){
+        return  $this->idComParent;
+    }
+
+    public function setIdComParent($idComParent){
+        $this->idComParent = $idComParent;
+        return  $this;
     }
 }
