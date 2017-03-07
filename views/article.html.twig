@@ -13,13 +13,19 @@
     <h2>{{ article.title }}</h2>
     <p>{{ article.content|raw }}</p>
 
+    {{ dump(article) }}
     <h3>Comments</h3>
     {% for comment in comments %}
+
         <p> <strong>{{ comment.author }}</strong> {{ comment.content }}</p>
-        <button type="button" class="btn-primary btn-xs buttonAnswer" value="{{ comment.id }}"> répondre </button>
+        <button type="button" class="btn-primary btn-xs buttonAnswer" value="{{ comment.id }}" > répondre </button>
 
     {% endfor %}
 
+    {% for reply in replys %}
+        <p> <strong>{{ reply.author }}</strong> {{ reply.content }}</p>
+
+    {% endfor %}
 
     <form name="reply" id="underLevelComment1" method="post"> </form>
 
@@ -67,7 +73,7 @@
 
                 $(function () {
                     $('#reply_annuler').click(function () {
-                        $('#Ajax').load('{{ article.id }}.html', function () {
+                        $('#Ajax').load('{{ article.id }}', function () {
 
                         });
                     });

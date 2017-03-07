@@ -39,7 +39,7 @@ class ReplyDAO extends DAO
 
         $comment = $this->commentDAO->find($commentId);
 
-        $sql = "select reply_id, reply_content, reply_author from t_reply where com_id=2 order by reply_id";
+        $sql = "select reply_id, reply_content, reply_author, art_id from t_reply where com_id=? order by reply_id";
         $result = $this->getDb()->fetchAll($sql, array($commentId));
 
         // Convert query result to an array of domain objects
@@ -79,12 +79,13 @@ class ReplyDAO extends DAO
     }
 
     public function save(Reply $reply) {
-         var_dump($reply->getComParent());
+
         $commentData = array(
             'reply_content' => $reply->getContent(),
             'reply_author' => $reply->getAuthor(),
             'com_id'    => $reply->getComParent(),
             'reply_level'   => $reply->getLevel(),
+            'art_id'    => $reply->getArticle()->getId(),
         );
 
         if ($reply->getId()) {

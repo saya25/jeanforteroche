@@ -43,7 +43,9 @@ class HomeController {
             }
             $reply = new Reply();
             $reply->setComment($comment);
+            $reply->setArticle($article);
             $reply->setId($id);
+            $comment->setReply($reply);
             $replyForm = $app['form.factory']->create(ReplyType::class, $reply);
             $replyForm->handleRequest($request);
             if ($replyForm->isSubmitted() && $replyForm->isValid())
@@ -54,12 +56,21 @@ class HomeController {
             }
         }
         $comments = $app['dao.comment']->findAllByArticle($id);
-        $replys = $app['dao.reply']->findAllByComment($id);
-
+        if ($comments) {
+            foreach ($comments as $comment) {
+                $replys = $app['dao.reply']->findAllByComment($comment->getId());
+            }
+            return $app['twig']->render('article.html.twig', array(
+                    'article' => $article,
+                    'comments' => $comments,
+                    'replys'  => $replys,
+                    'replyForm'  => $replyForm->createView(),
+                    'commentForm' => $commentForm->createView())
+            );
+        }
         return $app['twig']->render('article.html.twig', array(
                 'article' => $article,
                 'comments' => $comments,
-                'replys'  => $replys,
                 'replyForm'  => $replyForm->createView(),
                 'commentForm' => $commentForm->createView())
         );
