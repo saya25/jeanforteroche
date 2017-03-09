@@ -34,7 +34,6 @@ class HomeController {
         if ($article) {
             $comment = new Comment();
             $comment->setArticle($article);
-            $comment->setId($id);
             $commentForm = $app['form.factory']->create(CommentType::class, $comment);
             $commentForm->handleRequest($request);
             if ($commentForm->isSubmitted() && $commentForm->isValid()) {
@@ -44,15 +43,12 @@ class HomeController {
             $reply = new Reply();
             $reply->setComment($comment);
             $reply->setArticle($article);
-            $reply->setId($id);
-            $comment->setReply($reply);
             $replyForm = $app['form.factory']->create(ReplyType::class, $reply);
             $replyForm->handleRequest($request);
             if ($replyForm->isSubmitted() && $replyForm->isValid())
             {
                 $app['dao.reply']->save($reply);
                 $app['session']->getFlashBag()->add('success', 'Votre commentaire a bien été enregistrer');
-
             }
         }
         $comments = $app['dao.comment']->findAllByArticle($id);

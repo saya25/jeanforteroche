@@ -22,10 +22,13 @@
 
     {% endfor %}
 
-    {% for reply in replys %}
-        <p> <strong>{{ reply.author }}</strong> {{ reply.content }}</p>
+    {% if replys is defined %}
+        {% for reply in replys %}
+            <p> <strong>{{ reply.author }}</strong> {{ reply.content }}</p>
 
-    {% endfor %}
+        {% endfor %}
+    {% endif %}
+
 
     <form name="reply" id="underLevelComment1" method="post"> </form>
 

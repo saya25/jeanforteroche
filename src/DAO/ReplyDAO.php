@@ -17,6 +17,16 @@ class ReplyDAO extends DAO
      */
     private $commentDAO;
 
+    /**
+     * @var \jeanforteroche\DAO\ArticleDAO
+     */
+    private $articleDAO;
+
+    public function setArticleDAO(ArticleDAO $articleDAO)
+    {
+        $this->articleDAO = $articleDAO;
+    }
+
     public function setCommentDAO(CommentDAO $commentDAO)
     {
         $this->commentDAO = $commentDAO;
@@ -89,9 +99,12 @@ class ReplyDAO extends DAO
         );
 
         if ($reply->getId()) {
-            // The reply has already been saved : update it
+            // The comment has already been saved : update it
+            $this->getDb()->update('t_reply', $commentData, array('reply_id' => $reply->getId()));
+        } else {
+            // The comment has never been saved : insert it
             $this->getDb()->insert('t_reply', $commentData);
-            // Get the id of the newly created reply and set it on the entity.
+            // Get the id of the newly created comment and set it on the entity.
             $id = $this->getDb()->lastInsertId();
             $reply->setId($id);
         }
